@@ -1,21 +1,23 @@
 import React, { useState, useMemo } from "react";
-import { CalendarProps, CalendarEvent } from "../../types.ts";
-import { generateMonthView } from "../../utils/calendarUtils.ts";
-import {addMonths, subMonths, addYears, subYears, format} from "date-fns";
-import { EventModal } from "../EventModal.tsx";
+import { CalendarProps, CalendarEvent } from "../../types";
+import { generateMonthView } from "../../utils/calendarUtils";
+import { addMonths, subMonths, addYears, subYears, format } from "date-fns";
+import { EventModal } from "./../EventModal";
 import { CalendarHeader } from "./CalendarHeader";
 import { CalendarGrid } from "./CalendarGrid";
 
-export const Calendar: React.FC<CalendarProps> = ({ events, locale = "es" }) => {
+export const Calendar: React.FC<CalendarProps> = ({ events, locale = "es", onEventClick }) => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedEvents, setSelectedEvents] = useState<CalendarEvent[] | null>(null);
 
+    // Generar los días del mes
     const monthDays = useMemo(() => generateMonthView(format(currentDate, "yyyy-MM"), locale), [currentDate, locale]);
 
+    // Mapear eventos en base a la fecha
     const eventsMap = useMemo(() => {
         const map = new Map<string, CalendarEvent[]>();
         events.forEach((event) => {
-            const dateKey = new Date(event.date).toISOString().split("T")[0]; // Asegurar formato YYYY-MM-DD
+            const dateKey = new Date(event.date).toISOString().split("T")[0]; // Formato YYYY-MM-DD
             if (!map.has(dateKey)) {
                 map.set(dateKey, []);
             }
@@ -23,6 +25,15 @@ export const Calendar: React.FC<CalendarProps> = ({ events, locale = "es" }) => 
         });
         return map;
     }, [events]);
+
+    // Manejar click en un día del calendario
+    const handleDayClick = (date: string) => {
+        const dayEvents = eventsMap.get(date) || [];
+        setSelectedEvents(dayEvents.length > 0 ? dayEvents : null);
+        if (onEventClick) {
+            onEventClick(date, dayEvents); // 🔥 Disparar callback externo
+        }
+    };
 
     return (
         <div className="p-4 border rounded-md shadow-md mx-auto w-full max-w-screen-xl">
@@ -38,7 +49,7 @@ export const Calendar: React.FC<CalendarProps> = ({ events, locale = "es" }) => 
             <CalendarGrid
                 days={monthDays}
                 eventsMap={eventsMap}
-                onDayClick={(events) => setSelectedEvents(events.length > 0 ? events : null)}
+                onDayClick={handleDayClick} // 🔥 Pasamos la función al grid
             />
 
             {selectedEvents && (
