@@ -6,7 +6,7 @@ import { EventModal } from "./../EventModal";
 import { CalendarHeader } from "./CalendarHeader";
 import { CalendarGrid } from "./CalendarGrid";
 
-export const Calendar: React.FC<CalendarProps> = ({ events, locale = "es", onEventClick }) => {
+export const Calendar: React.FC<CalendarProps> = ({ events, locale = "es", onDayClick, onEventClick }) => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedEvents, setSelectedEvents] = useState<CalendarEvent[] | null>(null);
 
@@ -29,9 +29,16 @@ export const Calendar: React.FC<CalendarProps> = ({ events, locale = "es", onEve
     // Manejar click en un día del calendario
     const handleDayClick = (date: string) => {
         const dayEvents = eventsMap.get(date) || [];
-        setSelectedEvents(dayEvents.length > 0 ? dayEvents : null);
+        if (onDayClick) {
+            onDayClick(date, dayEvents); // 🔥 Disparar callback externo
+        }
+    };
+
+    // Manejar click en un evento específico dentro del día
+    const handleEventClick = (event: CalendarEvent) => {
+        setSelectedEvents([event]); // 🔥 Solo abre el modal si se hace clic en un evento
         if (onEventClick) {
-            onEventClick(date, dayEvents); // 🔥 Disparar callback externo
+            onEventClick(event); // 🔥 Disparar callback externo
         }
     };
 
@@ -46,11 +53,7 @@ export const Calendar: React.FC<CalendarProps> = ({ events, locale = "es", onEve
                 onPrevYear={() => setCurrentDate(subYears(currentDate, 1))}
             />
 
-            <CalendarGrid
-                days={monthDays}
-                eventsMap={eventsMap}
-                onDayClick={handleDayClick} // 🔥 Pasamos la función al grid
-            />
+            <CalendarGrid days={monthDays} eventsMap={eventsMap} onDayClick={handleDayClick} onEventClick={handleEventClick} />
 
             {selectedEvents && (
                 <EventModal events={selectedEvents} onClose={() => setSelectedEvents(null)} />

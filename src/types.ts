@@ -24,5 +24,6 @@ export interface CalendarEvent {
 export interface CalendarProps {
     events: CalendarEvent[];
     locale?: "es" | "en";
-    onEventClick?: (date: string, events: CalendarEvent[]) => void;
+    onDayClick?: (date: string, events: CalendarEvent[]) => void;
+    onEventClick?: (event: CalendarEvent) => void;
 }
