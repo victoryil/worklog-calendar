@@ -1,15 +1,22 @@
 import React, { useState } from "react";
 import { CalendarProps, CalendarEvent } from "../types";
 import { generateMonthView } from "../utils/calendarUtils";
-import { format, addMonths, subMonths, addYears, subYears } from "date-fns";
-import { getEventColor } from "../utils/colorUtils";
+import { format, addMonths, subMonths, addYears, subYears, Locale } from "date-fns";
 import { EventModal } from "./EventModal";
+import { useEventColor } from "../utils/colorUtils";
+import { enUS, es } from "date-fns/locale";
 
 export const Calendar: React.FC<CalendarProps> = ({ events, locale = "es" }) => {
-    const [currentDate, setCurrentDate] = useState(new Date()); // Estado para el mes y año actuales
-    const [selectedEvents, setSelectedEvents] = useState<CalendarEvent[] | null>(null); // Estado para eventos seleccionados
+    const [currentDate, setCurrentDate] = useState(new Date());
+    const [selectedEvents, setSelectedEvents] = useState<CalendarEvent[] | null>(null);
 
-    // Generar la vista del mes actual
+    // Mapeo de idiomas para date-fns
+    const localesMap: Record<string, Locale> = { es, en: enUS };
+
+    // Obtener el nombre del mes en el idioma correcto
+    const formattedMonth = format(currentDate, "MMMM yyyy", { locale: localesMap[locale] });
+
+    // Generar los días del mes en base al locale
     const monthDays = generateMonthView(format(currentDate, "yyyy-MM"), locale);
 
     // Función para obtener eventos de un día específico
@@ -29,8 +36,8 @@ export const Calendar: React.FC<CalendarProps> = ({ events, locale = "es" }) => 
                     <button className="p-2 bg-gray-200 rounded hover:bg-gray-300" onClick={prevYear}>&lt;&lt;</button>
                     <button className="p-2 bg-gray-200 rounded hover:bg-gray-300" onClick={prevMonth}>&lt;</button>
                 </div>
-                <h2 className="text-lg font-bold">
-                    {format(currentDate, "MMMM yyyy", { locale: locale === "es" ? undefined : undefined }).toUpperCase()}
+                <h2 className="text-lg font-bold capitalize">
+                    {formattedMonth}
                 </h2>
                 <div className="flex gap-2">
                     <button className="p-2 bg-gray-200 rounded hover:bg-gray-300" onClick={nextMonth}>&gt;</button>
@@ -59,27 +66,35 @@ export const Calendar: React.FC<CalendarProps> = ({ events, locale = "es" }) => 
                         return (
                             <div
                                 key={index}
-                                className={`relative p-2 border rounded-lg ${isCurrentMonth} text-center aspect-square flex flex-col justify-between`}
+                                className={`relative p-2 border rounded-lg ${isCurrentMonth} text-center aspect-square flex flex-col justify-between
+                                transition-transform transform hover:scale-105 hover:bg-gray-100 cursor-pointer active:scale-95`}
+                                onClick={() => setSelectedEvents(eventsForDay.length > 0 ? eventsForDay : null)}
                             >
                                 {/* Número del día en la esquina superior derecha */}
                                 <span className="absolute top-2 right-2 text-xs md:text-sm font-semibold">{day.formatted}</span>
 
                                 {/* Contenedor de eventos */}
                                 <div className="flex flex-col gap-1 mt-6 overflow-hidden">
-                                    {eventsForDay.slice(0, 1).map((event, idx) => (
-                                        <div
-                                            key={idx}
-                                            className={`text-xs p-1 rounded-md shadow truncate ${getEventColor(event)}`}
-                                        >
-                                            {event.title}
-                                        </div>
-                                    ))}
+                                    {eventsForDay.slice(0, 1).map((event, idx) => {
+                                        const eventColor = useEventColor(event);
+                                        return (
+                                            <div
+                                                key={idx}
+                                                className={`text-xs p-1 rounded-md shadow truncate ${eventColor}`}
+                                            >
+                                                {event.title}
+                                            </div>
+                                        );
+                                    })}
 
                                     {/* Si hay más de 1 evento, mostrar "+N" en una línea separada */}
                                     {eventsForDay.length > 1 && (
                                         <button
                                             className="text-xs text-blue-600 underline mt-1"
-                                            onClick={() => setSelectedEvents(eventsForDay)}
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // Evita que el click se propague al día
+                                                setSelectedEvents(eventsForDay);
+                                            }}
                                         >
                                             +{eventsForDay.length - 1}
                                         </button>
