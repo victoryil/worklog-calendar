@@ -1,6 +1,6 @@
 import './App.css'
 import {CalendarEvent} from "./types.ts";
-import {Calendar} from "./components/Calendar.tsx";
+import {Calendar} from "./components/Calendar/Calendar.tsx";
 import {ColorConfigPanel} from "./components/ColorConfigPanel.tsx";
 
 function App() {

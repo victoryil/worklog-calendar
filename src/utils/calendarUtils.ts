@@ -1,9 +1,12 @@
-import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, format, isSameMonth, parseISO } from "date-fns";
+import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, format, isSameMonth } from "date-fns";
 import { es, enUS } from "date-fns/locale";
 
 export const generateMonthView = (month: string, locale: "es" | "en") => {
     const localeMap = { es, en: enUS };
-    const firstDayOfMonth = parseISO(month); // "YYYY-MM"
+
+    // Asegurar que `month` es una fecha válida con día 1
+    const firstDayOfMonth = new Date(`${month}-01`); // "YYYY-MM-DD"
+
     const startDate = startOfWeek(startOfMonth(firstDayOfMonth), { weekStartsOn: locale === "es" ? 1 : 0 });
     const endDate = endOfWeek(endOfMonth(firstDayOfMonth), { weekStartsOn: locale === "es" ? 1 : 0 });
 
@@ -12,7 +15,7 @@ export const generateMonthView = (month: string, locale: "es" | "en") => {
 
     while (currentDate <= endDate) {
         days.push({
-            date: currentDate,
+            date: new Date(currentDate), // Asegurar que es un objeto Date independiente
             formatted: format(currentDate, "d", { locale: localeMap[locale] }),
             isCurrentMonth: isSameMonth(currentDate, firstDayOfMonth),
         });
