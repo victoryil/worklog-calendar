@@ -1,6 +1,7 @@
 import React from "react";
 import { format, Locale } from "date-fns";
 import { enUS, es } from "date-fns/locale";
+import { FaChevronLeft, FaChevronRight, FaAngleDoubleLeft, FaAngleDoubleRight } from "react-icons/fa"; // 🔥 Agregar iconos
 
 interface CalendarHeaderProps {
     currentDate: Date;
@@ -16,15 +17,19 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({ currentDate, loc
     const formattedMonth = format(currentDate, "MMMM yyyy", { locale: localesMap[locale] });
 
     return (
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-4 px-4">
+            {/* Botones de navegación */}
             <div className="flex gap-2">
-                <button className="p-2 bg-gray-200 rounded hover:bg-gray-300" onClick={onPrevYear}>&lt;&lt;</button>
-                <button className="p-2 bg-gray-200 rounded hover:bg-gray-300" onClick={onPrevMonth}>&lt;</button>
+                <button className="calendar-btn" onClick={onPrevYear}><FaAngleDoubleLeft /></button>
+                <button className="calendar-btn" onClick={onPrevMonth}><FaChevronLeft /></button>
             </div>
-            <h2 className="text-lg font-bold capitalize">{formattedMonth}</h2>
+
+            {/* Nombre del mes y año */}
+            <h2 className="text-xl font-bold capitalize text-gray-800">{formattedMonth}</h2>
+
             <div className="flex gap-2">
-                <button className="p-2 bg-gray-200 rounded hover:bg-gray-300" onClick={onNextMonth}>&gt;</button>
-                <button className="p-2 bg-gray-200 rounded hover:bg-gray-300" onClick={onNextYear}>&gt;&gt;</button>
+                <button className="calendar-btn" onClick={onNextMonth}><FaChevronRight /></button>
+                <button className="calendar-btn" onClick={onNextYear}><FaAngleDoubleRight /></button>
             </div>
         </div>
     );

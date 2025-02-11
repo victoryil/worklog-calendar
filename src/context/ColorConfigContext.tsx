@@ -1,41 +1,29 @@
-import React, { createContext, useState, ReactNode } from "react";
+import React, { createContext, useState, useContext } from "react";
 
-// Tipo de estructura para los colores personalizables
 interface ColorConfig {
-    [key: string]: { bg: string; text: string };
+    dayBackground: string;
+    dayBorder: string;
+    todayHighlight: string;
+    eventBackground: string;
+    eventText: string;
 }
 
-// Configuración inicial de colores
-const defaultColors: ColorConfig = {
-    "worklog-approved": { bg: "bg-green-300", text: "text-green-900" },
-    "worklog-pending": { bg: "bg-yellow-300", text: "text-yellow-900" },
-    "worklog-rejected": { bg: "bg-red-300", text: "text-red-900" },
-
-    "absence-vacation": { bg: "bg-blue-200", text: "text-blue-900" },
-    "absence-sick_leave": { bg: "bg-purple-300", text: "text-purple-900" },
-    "absence-holiday": { bg: "bg-gray-200", text: "text-gray-900" },
-
-    "meeting-confirmed": { bg: "bg-cyan-300", text: "text-cyan-900" },
-    "meeting-pending": { bg: "bg-orange-300", text: "text-orange-900" },
-    "meeting-cancelled": { bg: "bg-red-400", text: "text-red-900" },
-
-    "training-scheduled": { bg: "bg-indigo-300", text: "text-indigo-900" },
-    "training-completed": { bg: "bg-teal-300", text: "text-teal-900" },
-
-    "default": { bg: "bg-gray-300", text: "text-gray-900" }
-};
-
-// Crear el contexto
-export const ColorConfigContext = createContext<{
+interface ColorConfigContextType {
     colors: ColorConfig;
     setColors: (colors: ColorConfig) => void;
-}>({
-    colors: defaultColors,
-    setColors: () => {}
-});
+}
 
-// **Proveedor del contexto**
-export const ColorConfigProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+const defaultColors: ColorConfig = {
+    dayBackground: "bg-white",
+    dayBorder: "border-gray-300",
+    todayHighlight: "bg-blue-200",
+    eventBackground: "bg-blue-500",
+    eventText: "text-white",
+};
+
+const ColorConfigContext = createContext<ColorConfigContextType | undefined>(undefined);
+
+export const ColorConfigProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [colors, setColors] = useState<ColorConfig>(defaultColors);
 
     return (
@@ -43,4 +31,12 @@ export const ColorConfigProvider: React.FC<{ children: ReactNode }> = ({ childre
             {children}
         </ColorConfigContext.Provider>
     );
+};
+
+export const useColorConfig = (): ColorConfigContextType => {
+    const context = useContext(ColorConfigContext);
+    if (!context) {
+        throw new Error("useColorConfig debe ser usado dentro de un ColorConfigProvider");
+    }
+    return context;
 };

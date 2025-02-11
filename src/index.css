@@ -1,1 +1,22 @@
 @import "tailwindcss";
+.calendar-btn {
+    background-color: #f3f4f6;
+    border-radius: 8px;
+    padding: 8px 12px;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: #4b5563;
+}
+
+.calendar-btn:hover {
+    background-color: #e5e7eb;
+    transform: scale(1.1);
+}
+
+.calendar-btn:active {
+    background-color: #d1d5db;
+    transform: scale(0.95);
+}

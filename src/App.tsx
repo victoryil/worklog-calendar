@@ -1,7 +1,7 @@
 import './App.css'
 import {CalendarEvent} from "./types.ts";
 import {Calendar} from "./components/Calendar/Calendar.tsx";
-import {ColorConfigPanel} from "./components/ColorConfigPanel.tsx";
+import {ColorConfigProvider} from "./context/ColorConfigContext.tsx";
 
 function App() {
 
@@ -14,15 +14,12 @@ function App() {
     ];
 
     return (
-        <>
+        <ColorConfigProvider>
             <div className="mx-auto mt-10">
-                <h1 className="text-2xl font-bold mb-4 text-center">📆 Calendario Mensual</h1>
-                <Calendar events={mockEvents} locale="en" />
-                <div className="mt-10">
-                    <ColorConfigPanel />
-                </div>
+                <h1 className="text-2xl font-bold mb-4 text-center">📆 Calendario Personalizable</h1>
+                <Calendar events={mockEvents} locale="es" />
             </div>
-        </>
+        </ColorConfigProvider>
   )
 }
 
