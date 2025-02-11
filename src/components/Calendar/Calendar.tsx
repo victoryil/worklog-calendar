@@ -26,19 +26,19 @@ export const Calendar: React.FC<CalendarProps> = ({ events, locale = "es", onDay
         return map;
     }, [events]);
 
-    // Manejar click en un día del calendario
+    // 🔥 Manejar clic en un día del calendario
     const handleDayClick = (date: string) => {
         const dayEvents = eventsMap.get(date) || [];
         if (onDayClick) {
-            onDayClick(date, dayEvents); // 🔥 Disparar callback externo
+            onDayClick(date, dayEvents);
         }
     };
 
-    // Manejar click en un evento específico dentro del día
-    const handleEventClick = (event: CalendarEvent) => {
-        setSelectedEvents([event]); // 🔥 Solo abre el modal si se hace clic en un evento
-        if (onEventClick) {
-            onEventClick(event); // 🔥 Disparar callback externo
+    // 🔥 Manejar clic en un evento o en `+X más`
+    const handleEventClick = (events: CalendarEvent[]) => {
+        setSelectedEvents(events); // 🔥 Abre el modal con los eventos
+        if (onEventClick && events.length === 1) {
+            onEventClick(events[0]); // 🔥 Si es un solo evento, llama a `onEventClick`
         }
     };
 

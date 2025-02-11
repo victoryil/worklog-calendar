@@ -6,7 +6,7 @@ interface CalendarDayProps {
     day: { date: Date; formatted: string; isCurrentMonth: boolean };
     events: CalendarEvent[];
     onDayClick: () => void;
-    onEventClick: (event: CalendarEvent) => void;
+    onEventClick: (event: CalendarEvent[]) => void; // 🔥 Ahora recibe un array de eventos
 }
 
 export const CalendarDay: React.FC<CalendarDayProps> = ({ day, events, onDayClick, onEventClick }) => {
@@ -15,7 +15,7 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({ day, events, onDayClic
     return (
         <div
             className={`relative p-2 ${isCurrentMonth} border text-center aspect-square flex flex-col justify-between cursor-pointer hover:bg-gray-100 transition`}
-            onClick={onDayClick} // 🔥 Disparar `onDayClick` cuando se haga clic en un día
+            onClick={onDayClick} // 🔥 Se ejecuta al hacer clic en el día
         >
             <span className="absolute top-2 right-2 text-xs md:text-sm font-semibold">{day.formatted}</span>
 
@@ -28,7 +28,7 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({ day, events, onDayClic
                             className={`text-xs p-1 rounded-md shadow truncate ${eventColor} hover:scale-105 transition`}
                             onClick={(e) => {
                                 e.stopPropagation(); // ❌ Evita que el clic se propague al día
-                                onEventClick(event); // 🔥 Llamar solo si se clicó en un evento
+                                onEventClick([event]); // 🔥 Pasa solo un evento al modal
                             }}
                         >
                             {event.title}
@@ -36,8 +36,17 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({ day, events, onDayClic
                     );
                 })}
 
+                {/* 🔥 Si hay más de 2 eventos, mostrar un botón que abre el modal con todos los eventos del día */}
                 {events.length > 2 && (
-                    <span className="text-xs text-blue-600 underline mt-1">+{events.length - 2} más</span>
+                    <button
+                        className="text-xs text-blue-600 underline mt-1 hover:text-blue-700 transition"
+                        onClick={(e) => {
+                            e.stopPropagation(); // ❌ Evita que se llame `onDayClick`
+                            onEventClick(events); // 🔥 Pasa todos los eventos del día
+                        }}
+                    >
+                        +{events.length - 2} más
+                    </button>
                 )}
             </div>
         </div>
