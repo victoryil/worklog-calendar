@@ -6,7 +6,7 @@ interface CalendarDayProps {
     day: { date: Date; formatted: string; isCurrentMonth: boolean };
     events: CalendarEvent[];
     onDayClick: () => void;
-    onEventClick: (event: CalendarEvent[]) => void;
+    onEventClick?: (event: CalendarEvent) => void;
 }
 
 export const CalendarDay: React.FC<CalendarDayProps> = ({ day, events, onDayClick, onEventClick }) => {
@@ -14,7 +14,7 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({ day, events, onDayClic
 
     return (
         <div
-            className={`relative p-2 ${isCurrentMonth} border text-center aspect-square flex flex-col justify-between cursor-pointer hover:bg-gray-100 transition`}
+            className={`relative p-2 ${isCurrentMonth} border text-center aspect-square flex flex-col justify-center cursor-pointer hover:bg-gray-100 transition`}
             onClick={onDayClick}
         >
             <span className="absolute top-2 right-2 text-xs md:text-sm font-semibold">{day.formatted}</span>
@@ -28,7 +28,9 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({ day, events, onDayClic
                             className={`text-xs p-1 rounded-md shadow truncate ${eventColor} hover:scale-105 transition`}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                onEventClick([event]);
+                                if (onEventClick) {
+                                    onEventClick(event);
+                                }
                             }}
                         >
                             {event.title}
@@ -41,7 +43,9 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({ day, events, onDayClic
                         className="text-xs text-blue-600 underline mt-1 hover:text-blue-700 transition"
                         onClick={(e) => {
                             e.stopPropagation();
-                            onEventClick(events);
+                            if (onEventClick) {
+                                onEventClick(events[0]);
+                            }
                         }}
                     >
                         +{events.length - 2} más

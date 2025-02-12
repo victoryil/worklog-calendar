@@ -2,13 +2,11 @@ import React, { useState, useMemo } from "react";
 import { CalendarProps, CalendarEvent } from "../../types";
 import { generateMonthView } from "../../utils/calendarUtils";
 import { addMonths, subMonths, addYears, subYears, format } from "date-fns";
-import { EventModal } from "./../EventModal";
 import { CalendarHeader } from "./CalendarHeader";
 import { CalendarGrid } from "./CalendarGrid";
 
 export const Calendar: React.FC<CalendarProps> = ({ events, locale = "es", onDayClick, onEventClick }) => {
     const [currentDate, setCurrentDate] = useState(new Date());
-    const [selectedEvents, setSelectedEvents] = useState<CalendarEvent[] | null>(null);
 
     // Generar los días del mes
     const monthDays = useMemo(() => generateMonthView(format(currentDate, "yyyy-MM"), locale), [currentDate, locale]);
@@ -33,11 +31,9 @@ export const Calendar: React.FC<CalendarProps> = ({ events, locale = "es", onDay
         }
     };
 
-    const handleEventClick = (events: CalendarEvent[]) => {
-        setSelectedEvents(events);
-        if (onEventClick && events.length === 1) {
-            onEventClick(events[0]);
-        }
+    const handleEventClick = (event: CalendarEvent) => {
+        onEventClick?.(event);
+        console.log("Evento seleccionado: ", event);
     };
 
     return (
@@ -51,11 +47,7 @@ export const Calendar: React.FC<CalendarProps> = ({ events, locale = "es", onDay
                 onPrevYear={() => setCurrentDate(subYears(currentDate, 1))}
             />
 
-            <CalendarGrid days={monthDays} eventsMap={eventsMap} onDayClick={handleDayClick} onEventClick={handleEventClick} />
-
-            {selectedEvents && (
-                <EventModal events={selectedEvents} onClose={() => setSelectedEvents(null)} />
-            )}
+                <CalendarGrid days={monthDays} eventsMap={eventsMap} onDayClick={handleDayClick} onEventClick={handleEventClick} />
         </div>
     );
 };

@@ -6,7 +6,7 @@ interface CalendarGridProps {
     days: { date: Date; formatted: string; isCurrentMonth: boolean }[];
     eventsMap: Map<string, CalendarEvent[]>;
     onDayClick: (date: string) => void;
-    onEventClick: (events: CalendarEvent[]) => void;
+    onEventClick?: (event: CalendarEvent) => void;
 }
 
 export const CalendarGrid: React.FC<CalendarGridProps> = ({ days, eventsMap, onDayClick, onEventClick }) => {
