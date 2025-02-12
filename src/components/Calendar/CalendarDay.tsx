@@ -6,7 +6,7 @@ interface CalendarDayProps {
     day: { date: Date; formatted: string; isCurrentMonth: boolean };
     events: CalendarEvent[];
     onDayClick: () => void;
-    onEventClick: (event: CalendarEvent[]) => void; // 🔥 Ahora recibe un array de eventos
+    onEventClick: (event: CalendarEvent[]) => void;
 }
 
 export const CalendarDay: React.FC<CalendarDayProps> = ({ day, events, onDayClick, onEventClick }) => {
@@ -15,7 +15,7 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({ day, events, onDayClic
     return (
         <div
             className={`relative p-2 ${isCurrentMonth} border text-center aspect-square flex flex-col justify-between cursor-pointer hover:bg-gray-100 transition`}
-            onClick={onDayClick} // 🔥 Se ejecuta al hacer clic en el día
+            onClick={onDayClick}
         >
             <span className="absolute top-2 right-2 text-xs md:text-sm font-semibold">{day.formatted}</span>
 
@@ -27,8 +27,8 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({ day, events, onDayClic
                             key={event.id}
                             className={`text-xs p-1 rounded-md shadow truncate ${eventColor} hover:scale-105 transition`}
                             onClick={(e) => {
-                                e.stopPropagation(); // ❌ Evita que el clic se propague al día
-                                onEventClick([event]); // 🔥 Pasa solo un evento al modal
+                                e.stopPropagation();
+                                onEventClick([event]);
                             }}
                         >
                             {event.title}
@@ -36,13 +36,12 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({ day, events, onDayClic
                     );
                 })}
 
-                {/* 🔥 Si hay más de 2 eventos, mostrar un botón que abre el modal con todos los eventos del día */}
                 {events.length > 2 && (
                     <button
                         className="text-xs text-blue-600 underline mt-1 hover:text-blue-700 transition"
                         onClick={(e) => {
-                            e.stopPropagation(); // ❌ Evita que se llame `onDayClick`
-                            onEventClick(events); // 🔥 Pasa todos los eventos del día
+                            e.stopPropagation();
+                            onEventClick(events);
                         }}
                     >
                         +{events.length - 2} más

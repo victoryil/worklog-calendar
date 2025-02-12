@@ -26,7 +26,6 @@ export const Calendar: React.FC<CalendarProps> = ({ events, locale = "es", onDay
         return map;
     }, [events]);
 
-    // 🔥 Manejar clic en un día del calendario
     const handleDayClick = (date: string) => {
         const dayEvents = eventsMap.get(date) || [];
         if (onDayClick) {
@@ -34,11 +33,10 @@ export const Calendar: React.FC<CalendarProps> = ({ events, locale = "es", onDay
         }
     };
 
-    // 🔥 Manejar clic en un evento o en `+X más`
     const handleEventClick = (events: CalendarEvent[]) => {
-        setSelectedEvents(events); // 🔥 Abre el modal con los eventos
+        setSelectedEvents(events);
         if (onEventClick && events.length === 1) {
-            onEventClick(events[0]); // 🔥 Si es un solo evento, llama a `onEventClick`
+            onEventClick(events[0]);
         }
     };
 
