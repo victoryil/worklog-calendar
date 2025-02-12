@@ -4,26 +4,22 @@ export type MeetingStatus = "confirmed" | "pending" | "cancelled";
 export type TrainingStatus = "scheduled" | "completed";
 export type EventCategory = "conference" | "workshop";
 
-// **Nuevos Tipos de Estado**
 export type EventStatus = WorklogStatus | AbsenceType | MeetingStatus | TrainingStatus | EventCategory;
-
-// **Tipos de eventos permitidos**
 export type EventType = "worklog" | "absence" | "meeting" | "training" | "event";
 
-// **Estructura del evento en el calendario**
-export interface CalendarEvent {
+// Se permite que el usuario pase sus propios tipos de eventos y estados
+export interface CalendarEvent<T extends string = EventType, S extends string = EventStatus> {
     id: string;
-    date: string; // Formato "YYYY-MM-DD"
-    type: EventType;
-    status?: EventStatus;
+    date: string;
+    type: T;
+    status?: S;
     title: string;
     description?: string;
 }
 
-// **Propiedades del componente de calendario**
-export interface CalendarProps {
-    events: CalendarEvent[];
+export interface CalendarProps<T extends string = EventType, S extends string = EventStatus> {
+    events: CalendarEvent<T, S>[];
     locale?: "es" | "en";
-    onDayClick?: (date: string, events: CalendarEvent[]) => void;
-    onEventClick?: (event: CalendarEvent) => void;
+    onDayClick?: (date: string, events: CalendarEvent<T, S>[]) => void;
+    onEventClick?: (event: CalendarEvent<T, S>) => void;
 }
